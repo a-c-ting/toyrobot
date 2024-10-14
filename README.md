@@ -1,4 +1,4 @@
-Environment:
+# Environment:
 Ubuntu-24.02/WSL
 gcc 13.2.0 (C++23)
 CMake 3.30
@@ -13,19 +13,15 @@ gcc-13.2.0
 CMake 3.30
     sudo snap install cmake
 
-How to build:
+# How to build:
 1. go to project root folder
 2. cmake -S . -B build
 3. cmake --build build
 
-How to run test
+# How to run test
 0. go to project root folder
 1. finish building
 2. cd build
 3. ctest -V
 
 The executable (ToyRobot) should be in the build folder.
-
-EasyLog is used in this project:
-https://github.com/RealFaceCode/easyLog
-

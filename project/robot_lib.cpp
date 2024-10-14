@@ -1,96 +1,131 @@
-// #include <string>
 #include "robot_lib.hpp"
 
-void Robot::get_input(vector<string> raw) {
-    cout << "get_input start" << endl;
+void Robot::processInput(vector<string> raw) {
+    cout << "processInput start" << endl;
 
     for (auto & line : raw) {
-        auto input_line = parse_command(line);
+        auto input_line = parseCommand(line);
         switch (input_line)
         {
         case RobotCommand::PLACE:
-            cout << "PLACE" << endl;
-
             Robot::place(line);
             break;
         case RobotCommand::MOVE:
-            cout << "MOVE" << endl;
             break;
         case RobotCommand::LEFT:
-            cout << "LEFT" << endl;
+            fd = turnLeftRight(fd, line);
             break;
         case RobotCommand::RIGHT:
-            cout << "RIGHT" << endl;
+            fd = turnLeftRight(fd, line);
             break;
         case RobotCommand::REPORT:
-            cout << "REPORT" << endl;
+            cout << "pos: " << report() << endl;
             break;
         case RobotCommand::INVALID:
             if (false == first_valid_place) {
-                cout << "Error: Invalid PLACE command." << endl;
+                cout << "Error: 404 Robot Not Found. Please place robot on the table." << endl;
             } else {
-                cout << "Error: Unknown command. Ignoring." << endl;
+                cout << "Error: Unknown command. Will be ignored." << endl;
             }
             break;
         default:
             break;
         }
-        cout << line << endl;
     }
 
-    cout << "get_input end" << endl;
+    cout << "processInput end" << endl;
 }
 
+// FDirection is arranged so a turn right increases the integer equivalent
+// +1 right, -1 left
+FDirection turnLeftRight(FDirection current, string turn_command) {
+    int turn_modifier = (turn_command == "RIGHT") ? 1 : -1;
+
+    auto new_direct = (current + turn_modifier) % 4; //0 to 3
+    if (new_direct < 0)
+        new_direct = FDirection::SOUTH;
+
+    cout << "turning " + turn_command << ": " << current << " to " << new_direct << endl;
+
+    return FDirection(new_direct);
+}
+
+string Robot::report() {
+    auto result = std::to_string(x) + "," + std::to_string(y) + "," + faceDirectionToString(fd);
+    return result;
+}
+
+//Inconsistency: x,y param(stoi) ignores leading/trailing spaces. Direction doesn't. Might fix.
 void Robot::place(string raw_place) {
-    parse_raw_place(raw_place.substr(6));
-};
-
-void Robot::parse_raw_place(string raw_place_details) {
+    int OFFSET = 6; //"PLACE " takes 6 characters
+    auto raw_place_details = raw_place.substr(OFFSET);
+    cout << "PLACE attempted" << endl;
     try {
-        vector<string> temp_details;
-        string temp;
-        stringstream ss(raw_place_details);
-        while(getline(ss, temp, ',')) {
-            temp_details.push_back(temp);
+        auto [temp_x, temp_y, temp_fd] = getPLACECommandDetails(raw_place_details);
+
+        //validate map bound
+        if (is_out_of_bounds(temp_x, temp_y)) {
+            throw std::runtime_error("Error: PLACE command out of bounds.");
         }
 
-        //validation
-        if ((3 != temp_details.size())  //three params X,Y,F
-            || (stoi(temp_details[0]) < 0) // boundary checks
-            || (stoi(temp_details[0]) > 4)
-            || (stoi(temp_details[1]) < 0)
-            || (stoi(temp_details[1]) > 4)
-        ) {
-            throw std::runtime_error("Error: Invalid PLACE command.");
-        }
-
-        x = stoi(temp_details[0]);
-        y = stoi(temp_details[1]);
-        fd = transform_to_direction_enum(temp_details[2]);
+        x = temp_x;
+        y = temp_y;
+        fd = temp_fd;
+        cout << "PLACE successful" << endl;
     } catch (const exception& e) {
         first_valid_place = false;
         cout << e.what() << endl;
     }
 }
 
-FaceDirection transform_to_direction_enum(string raw_direction) {
-    FaceDirection result;
+//0, 0 origin
+bool Robot::is_out_of_bounds(int x, int y) {
+    auto max_x = map_size_x - 1, max_y = map_size_y - 1;
+    return (x < 0) || (x > max_x) || (y < 0) || (y > max_y);
+}
+
+FDirection transformToFDirection(string raw_direction) {
+    FDirection result;
+    //case insensitive
     std::transform(raw_direction.begin(), raw_direction.end(), raw_direction.begin(), ::toupper);
+
     if ("WEST" == raw_direction) {
-        result = FaceDirection::WEST;
+        result = FDirection::WEST;
     } else if ("NORTH" == raw_direction) {
-        result = FaceDirection::NORTH;
+        result = FDirection::NORTH;
     } else if ("EAST" == raw_direction) {
-        result = FaceDirection::EAST;
+        result = FDirection::EAST;
     } else if ("SOUTH" == raw_direction) {
-        result = FaceDirection::SOUTH;
+        result = FDirection::SOUTH;
     } else {
         throw std::runtime_error("Error: Invalid DIRECTION.");
     }
     return result;
 }
 
-RobotCommand Robot::parse_command(string raw_command) {
+string faceDirectionToString(FDirection direction) {
+    auto result = "";
+    switch (direction)
+    {
+    case FDirection::WEST:
+        result = "WEST";
+        break;
+    case FDirection::NORTH:
+        result = "NORTH";
+        break;
+    case FDirection::EAST:
+        result = "EAST";
+        break;
+    case FDirection::SOUTH:
+        result = "SOUTH";
+        break;
+    default:
+        break;
+    }
+    return result;
+}
+
+RobotCommand Robot::parseCommand(string raw_command) {
     RobotCommand result;
     std::transform(raw_command.begin(), raw_command.end(), raw_command.begin(), ::toupper);
     if (true == raw_command.starts_with("PLACE ")) {
@@ -118,14 +153,32 @@ RobotCommand Robot::parse_command(string raw_command) {
     return result;
 };
 
+//TODO: short short wrapper for stoi might be a good idea since stoi exception
+//  doesn't have good description.
+tuple<int, int, FDirection> getPLACECommandDetails(string details) {
+    //tokenize
+    vector<string> temp_details;
+    string temp;
+    stringstream ss(details);
+    while(getline(ss, temp, ',')) {
+        temp_details.push_back(temp);
+    }
+
+    //validate input
+    if (3 != temp_details.size()) { // three params X,Y,Z
+        throw std::runtime_error("Error: PLACE command parameter mismatch.");
+    }
+
+    //specs: x, y, direction facing
+    return {stoi(temp_details[0]),
+        stoi(temp_details[1]),
+        transformToFDirection(temp_details[2])};
+}
+
 Robot::Robot() {
-    cout << "Constructor" << endl;
+    // cout << "Constructor" << endl;
 }
 
 Robot::~Robot() {
-    cout << "Destructor" << endl;
-}
-
-string simple_lib_function() {
-    return "Compiled in library";
+    // cout << "Destructor" << endl;
 }

@@ -18,34 +18,36 @@ enum RobotCommand {
     INVALID
 };
 
-enum FaceDirection {
+enum FDirection {
     WEST,
     NORTH,
     EAST,
     SOUTH
 };
 
-string simple_lib_function();
-FaceDirection transform_to_direction_enum(string raw_direction);
+FDirection transformToFDirection(string raw_direction);
+tuple<int, int, FDirection> getPLACECommandDetails(string details);
+FDirection turnLeftRight(FDirection current, string turn_command);
+string faceDirectionToString(FDirection direction);
 
 class Robot {
     private:
         bool first_valid_place = false;
         //map data
-        int max_x = 5;
-        int max_y = 5;
+        int map_size_x = 5;
+        int map_size_y = 5;
         int x = 0; //current pos
         int y = 0; //current pos
-        FaceDirection fd;
+        FDirection fd;
 
     public:
         Robot();
         ~Robot();
 
-        RobotCommand parse_command(string raw_command);
-        void get_input(vector<string>);
+        RobotCommand parseCommand(string raw_command);
+        string report();
+        void processInput(vector<string>);
         void place(string raw_place);
-        void parse_raw_place(string raw_place_details);
-
+        bool is_out_of_bounds(int x, int y);
         // void get_map_data();
 };

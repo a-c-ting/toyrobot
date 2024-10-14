@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
     }
 
     Robot g;
-    g.get_input(raw_commands);
+    g.processInput(raw_commands);
 
     cout << "Hello, world!" << endl;
 }
