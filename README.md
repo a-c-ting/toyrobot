@@ -5,13 +5,12 @@ CMake 3.30
 
 ## Easy ways to setup
 Ubuntu-24.02 is already for WSL
-    wsl -l -o
-    wsl --install -d <DistroName>
+>wsl -l -o
+>wsl --install -d <DistroName>
 gcc-13.2.0
-    apt-get on Ubuntu-24.02
-    Note: gcc-13.2.0 has yet to fully implement all C++23 features. (<print> only on 14.1 onwards)
+>apt-get on Ubuntu-24.02
 CMake 3.30
-    sudo snap install cmake
+>sudo snap install cmake
 
 Disclaimer: Project is tested only in the environment above. Lower version not guaranteed.
 
