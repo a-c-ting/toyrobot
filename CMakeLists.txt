@@ -11,8 +11,15 @@ project(
     LANGUAGES CXX)
 
 # C++ standard required
-set(CMAKE_CXX_STANDARD C23)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # Targets
 add_subdirectory(project)
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    include(CTest)
+endif()
+
+message ("C ${CMAKE_C_COMPILER}")
+message ("C++ ${CMAKE_CXX_COMPILER}")
