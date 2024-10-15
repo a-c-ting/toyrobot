@@ -106,7 +106,6 @@ void Robot::place(string raw_place) {
     }
 }
 
-//0, 0 origin
 bool Robot::is_out_of_bounds(int x, int y) {
     auto max_x = map_size_x - 1, max_y = map_size_y - 1;
     return (x < 0) || (x > max_x) || (y < 0) || (y > max_y);

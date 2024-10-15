@@ -18,14 +18,7 @@ int main(int argc, char * argv[])
         raw_commands.push_back(line);
     }
 
+    //execute commands from textfile
     Robot g;
     g.processInput(raw_commands);
-
-    cout << "Hello, world!" << endl;
-}
-
-vector<string> parse_input(fstream) {
-    vector<string> result;
-    cout << "boom" << endl;
-    return result;
 }

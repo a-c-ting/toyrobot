@@ -8,5 +8,3 @@
 #include <filesystem>
 
 using namespace std;
-
-vector<string> parse_input(fstream);

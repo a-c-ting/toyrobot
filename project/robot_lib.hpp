@@ -18,7 +18,7 @@ enum RobotCommand {
     INVALID,
 };
 
-// Southwest = 0,0
+// Origin at Southwest = 0,0
 // moving along x-axis -> east/west
 // moving along y-axis -> north/south
 enum FDirection {
@@ -28,7 +28,7 @@ enum FDirection {
     SOUTH,
 };
 
-//helper functions
+//helpers
 FDirection transformToFDirection(string raw_direction);
 tuple<int, int, FDirection> getPLACECommandDetails(string details);
 FDirection turnLeftRight(FDirection current, string turn_command);
