@@ -31,4 +31,6 @@ Disclaimer: Project is tested only in the environment above.
 The executable (ToyRobot) should be in the build folder. 
 >./ToyRobot <test_input.txt location>
 
-If no input is given, it will select test_input.txt at current working directory.
+One command per line in the input file. If no input is given, it will select test_input.txt at current working directory. 
+
+See test_input.txt for a sample file.
