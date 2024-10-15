@@ -3,7 +3,9 @@
 int main(int argc, char * argv[])
 {
     //if no input, select test_input.txt in current folder
-    string input = "./test_input.txt";
+    auto cwd = std::filesystem::current_path().string();
+    string input = cwd + "/test_input.txt";
+
     if (argc > 1) {
         input = argv[1];
     }

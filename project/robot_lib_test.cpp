@@ -159,7 +159,7 @@ TEST_CASE_METHOD( gFixture, "Travel to center clockwise", "[Integration]") {
         }
     }
 
-    //test place a second time
+    //test place a second time, using processInput
     g.processInput(travel_commands);
     auto final_position = g.getRobotPosition();
     REQUIRE( final_position == final_destination);
