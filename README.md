@@ -3,16 +3,18 @@ Ubuntu-24.02 (WSL)
 gcc 13.2.0 (C++20)
 CMake 3.30
 
-## Easy ways to setup
+## Env Setup
 Ubuntu-24.02 is already for WSL
 >wsl -l -o
->wsl --install -d <DistroName>
+>wsl --install -d (DistroName)
+
 gcc-13.2.0
 >apt-get on Ubuntu-24.02
+
 CMake 3.30
 >sudo snap install cmake
 
-Disclaimer: Project is tested only in the environment above. Lower version not guaranteed.
+Disclaimer: Project is tested only in the environment above.
 
 # How to build:
 1. go to project root folder
@@ -28,4 +30,3 @@ The executable (ToyRobot) should be in the build folder.
 1. ./ToyRobot <test_input.txt location>
 
 If no input is given, it will select test_input.txt at current location.
-

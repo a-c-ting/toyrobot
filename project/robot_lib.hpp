@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -15,39 +16,49 @@ enum RobotCommand {
     LEFT,
     RIGHT,
     REPORT,
-    INVALID
+    INVALID,
 };
 
+// Southwest = 0,0
+// moving along x-axis -> east/west
+// moving along y-axis -> north/south
 enum FDirection {
     WEST,
     NORTH,
     EAST,
-    SOUTH
+    SOUTH,
 };
 
+//helper functions
 FDirection transformToFDirection(string raw_direction);
 tuple<int, int, FDirection> getPLACECommandDetails(string details);
 FDirection turnLeftRight(FDirection current, string turn_command);
 string faceDirectionToString(FDirection direction);
 
 class Robot {
-    private:
-        bool first_valid_place = false;
-        //map data
-        int map_size_x = 5;
-        int map_size_y = 5;
-        int x = 0; //current pos
-        int y = 0; //current pos
-        FDirection fd;
-
     public:
         Robot();
         ~Robot();
 
-        RobotCommand parseCommand(string raw_command);
-        string report();
+        void processCommand(string line);
         void processInput(vector<string>);
-        void place(string raw_place);
-        bool is_out_of_bounds(int x, int y);
+        tuple<int, int, string> getRobotPosition();
         // void get_map_data();
+
+    private:
+        bool is_placed_on_table = false;
+        int map_size_x = 5;
+        int map_size_y = 5;
+        int current_x = 0; //current pos
+        int current_y = 0; //current pos
+        //map data
+        FDirection fd;
+
+        RobotCommand parseCommand(string raw_command);
+        void place(string raw_place);
+        void moveRobot();
+        string report();
+        bool is_out_of_bounds(int x, int y);
+
 };
+
